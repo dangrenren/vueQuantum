@@ -15,9 +15,11 @@ const routes = [
             {path: 'user', name: '用户管理', component: () => import('../views/User.vue')},
             {path: 'person', name: '个人信息', component: () => import('../views/Person.vue')},
             {path: 'secretKeyDownload', name: '密钥下载', component: () => import('../views/secretKeyDownload.vue')},
-            {path: 'file', name: '文件上传', component: () => import('../views/File.vue')},
-            {path: 'role', name: '权限管理', component: () => import('../views/Role.vue')},
+            {path: 'file', name: '文件管理', component: () => import('../views/File.vue')},
+            {path: 'role', name: '角色管理', component: () => import('../views/Role.vue')},
+            {path: 'menu', name: '菜单管理', component: () => import('../views/Menu.vue')},
             {path: 'im3', name: '聊天室', component: () => import('../views/Im3.vue')},
+
         ]
     },
     {
