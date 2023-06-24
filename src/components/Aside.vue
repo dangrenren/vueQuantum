@@ -12,6 +12,7 @@
            style="width: 30px; position: relative; top: 10px; right: 10px;float: inside">
       <b style="color: white" v-show="logoTextShow">后台管理系统</b>
     </div>
+    <!--
     <el-menu-item index="/home">
       <i class="el-icon-house"></i>
       <span slot="title">主页</span>
@@ -39,16 +40,38 @@
       </el-menu-item>
     </el-submenu>
 
-    <el-menu-item index="/secretKeyDownload"><!--密钥下载-->
-      <i class="el-icon-download"></i>
-      <span slot="title">密钥下载</span>
+    <el-menu-item index="/secretKeyDownload">
+    <i class="el-icon-download"></i>
+    <span slot="title">密钥下载</span>
     </el-menu-item>
 
-    <el-menu-item index="/im3">  <!--角色管理 -->
+    <el-menu-item index="/im3">
       <i class="el-icon-message"></i>
       <span slot="title">聊天室</span>
     </el-menu-item>
-
+    -->
+    <div v-for="item in menus" :key="item.id">
+      <div v-if="item.path">
+        <el-menu-item :index="item.path">
+          <i :class="item.icon"></i>
+          <span slot="title">{{ item.name }}</span>
+        </el-menu-item>
+      </div>
+      <div v-else>
+        <el-submenu :index="item.id + ''"><!--因为id是数字，会报错，所以加个空字符串让他变成字符串-->
+          <template slot="title">
+            <i :class="item.icon"></i>
+            <span slot="title">{{ item.name }}</span>
+          </template>
+          <div  v-for="subItem in item.children" :key="subItem.id">
+            <el-menu-item :index="subItem.path">
+              <i :class="subItem.icon"></i>
+              <span slot="title">{{ subItem.name }}</span>
+            </el-menu-item>
+          </div>
+        </el-submenu>
+      </div>
+    </div>
   </el-menu>
 </template>
 
@@ -58,6 +81,12 @@ export default {
   props: {
     isCollapse: Boolean,
     logoTextShow: Boolean
+  },
+  data() {
+    return {
+      menus: localStorage.getItem("menus") ? JSON.parse(localStorage.getItem("menus")) : [],
+      opens: localStorage.getItem("menus") ? JSON.parse(localStorage.getItem("menus")).map(v => v.id + '') : []
+    }
   }
 }
 </script>

@@ -54,6 +54,7 @@ export default {
       this.$router.push("/login")
       //this.$router.push('Login') 用路由path或者name都可以
       localStorage.removeItem("user")
+      localStorage.removeItem("menus")
       this.$message.success("成功退出")
     }
   },

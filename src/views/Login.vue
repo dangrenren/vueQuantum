@@ -45,6 +45,7 @@ export default {
           this.request.post("/user/login", this.user).then(res => {
             if (res.code === '200') {//后端出来的数据状态码为200，代表查询到了用户，跳转到登录界面
               localStorage.setItem("user", JSON.stringify(res.data))//储存用户信息到浏览器localStorge
+              localStorage.setItem("menus", JSON.stringify(res.data.menus))  // 存储用户信息到浏览器
               sessionStorage.setItem("user", JSON.stringify(res.data))  // 缓存用户信息到sessionStorge
               this.$router.push("/")
               this.$message.success("登录成功")
