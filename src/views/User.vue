@@ -23,7 +23,7 @@
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove"></i></el-button>
       </el-popconfirm>
 
-      <el-upload :action="'http://localhost:9090/user/import'" :show-file-list="false" accept="xlsx"
+      <el-upload :action="'http://'+serverIp+':8090/user/import'" :show-file-list="false" accept="xlsx"
                  :on-success="handleExcelImportSuccess" style="display: inline-block">
         <el-button Style="margin-left: 5px" type="primary">导入 <i class="el-icon-bottom"></i></el-button>
       </el-upload>
@@ -96,10 +96,14 @@
 </template>
 
 <script>
+
+import {serverIp} from "../../public/config";
+
 export default {
   name: "User",
   data() {
     return {
+      serverIp: serverIp,
       tableData: [],
       totalCount: 100,
       currentPage: 1,
@@ -131,7 +135,7 @@ export default {
     selectAllUsers() {
       this.request({
         method: "get",
-        //url:"http://localhost:9090/user/pageUser?pageNum="+this.pageNum+"&pageSize="+this.pageSize
+        //url:"http://localhost:8091/user/pageUser?pageNum="+this.pageNum+"&pageSize="+this.pageSize
         url: "/user/getPageUser",
         params: {
           pageNum: this.pageNum,
@@ -173,8 +177,8 @@ export default {
     save() {
       this.request({
         method: "post",
-        //url:"http://localhost:9090/user/pageUser?pageNum="+this.pageNum+"&pageSize="+this.pageSize
-        url: "http://localhost:9090/user/addUser",//不写http://localhst:9090是可以的，以为request.js里定义了baseUrl
+        //url:"http://localhost/8091/user/pageUser?pageNum="+this.pageNum+"&pageSize="+this.pageSize
+        url: "http://'+serverIP +':8091/user/addUser",//不写http://localhst:9090是可以的，以为request.js里定义了baseUrl
         data: this.form
       }).then(res => {
         if (res) {
@@ -200,8 +204,8 @@ export default {
     edit() {
       this.request({
         method: "put",
-        //url:"http://localhost:9090/user/pageUser?pageNum="+this.pageNum+"&pageSize="+this.pageSize
-        url: "http://localhost:9090/user/updateUser",
+        //url:"http://localhos/8091/user/pageUser?pageNum="+this.pageNum+"&pageSize="+this.pageSize
+        url: "http://"+serverIp+":8091/user/updateUser",
         data: this.form
       }).then(res => {
         if (res) {
@@ -224,7 +228,7 @@ export default {
       this.request({
             method: "delete",
             //url:"http://localhost:9090/user/pageUser?pageNum="+this.pageNum+"&pageSize="+this.pageSize
-            url: "http://localhost:9090/user/" + id,
+            url: "http://"+serverIp+":8091/user/"+ id,
           }
       ).then(res => {
         if (res == 1) {
@@ -267,7 +271,7 @@ export default {
       this.selectAllUsers()//重新加载
     },
     exp() {//导出数据
-      window.open("http://localhost:9090/user/export")
+      window.open("http://"+serverIp+":8091/user/export")
     },
     handleExcelImportSuccess() {//导入xlsxs数据表成功后
       this.$message.success("导入成功")

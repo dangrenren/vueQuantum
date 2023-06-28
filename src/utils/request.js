@@ -2,9 +2,11 @@ import axios from 'axios'
 import ElementUI from "element-ui";
 import message from "element-ui/packages/message";
 import router from "@/router/indexEarly";
+import {serverIp} from "../../public/config";
 
 const request = axios.create({
-    baseURL: 'http://localhost:8091',  // 注意！！ 这里是全局统一加上了 后端接口前缀 前缀，后端必须进行跨域配置！
+    //baseURL: 'http://localhost:8091',  // 注意！！ 这里是全局统一加上了 后端接口前缀 前缀，后端必须进行跨域配置！
+    baseURL: `http://${serverIp}:8094`,
     timeout: 5000
 })
 

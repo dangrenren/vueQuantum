@@ -1,152 +1,138 @@
-<template>
-  <div>
+<template xmlns:el-col="http://www.w3.org/1999/xhtml">
+  <div class="app-container">
     <div style="cursor: pointer; font-size: 25px">
-      <el-row :gutter="20">
-        <el-col :span="4">
+      <el-row :gutter="24">
+        <el-col :span="6">
           <div class="grid-content bg-purple">
             <el-button type="primary" plain @click="download0">下载->认证</el-button>
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <div class="grid-content bg-purple">
             <el-button type="success" plain @click="download1">下载->鬼成像</el-button>
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <div class="grid-content bg-purple">
             <el-button type="danger" plain @click="download2">下载->云盘加密</el-button>
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <div class="grid-content bg-purple">
             <el-button type="warning" plain @click="download3">下载->分发重构</el-button>
           </div>
         </el-col>
-        <!-- 用eccrypto库 -->
-        <el-col :span="4">
-          <div class="grid-content bg-purple">
-            <el-button type="warning" plain @click="clickDH">打印->DH协商密钥1</el-button>
-          </div>
-        </el-col>
-        <!--用eccrypto-js 库-->
-        <el-col :span="4">
-          <div class="grid-content bg-purple">
-            <el-button type="warning" plain @click="eccryptoJS">打印->DH协商密钥2</el-button>
-          </div>
-        </el-col>
-
       </el-row>
     </div>
 
-    <div>
+    <div v-show="isUpload" style="margin-top:50px;display: flex; align-items: center;">
       <el-row>
-        <div style="top: 50px;color: #dd6161; margin-top: 50px"><i class="el-icon-user-solid"/>
-          <i>当不同用途需要的密钥并不是唯一的种类时，（例如云盘加密时需要量子密钥也需要普通对称密钥）除了提供按钮方式，也可以使用下拉表单的方式，选择密钥用途，再选择密钥种类，点击下载，下载对应需求的密钥</i>
-        </div>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <div class="grid-content bg-purple-dark"> dd</div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
+        <el-col :span="20">
           <el-upload
               class="upload-demo"
-              action="http://localhost:9090/file/upload"
+              :action="'http://'+serverIp+':8091/file/upload'"
               :before-upload="beforeUpload"
               :on-success="handleAvatarSuccess"
               :show-file-list="false">
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="small" type="primary">管理员上传密钥文件</el-button>
             <div slot="tip" class="el-upload__tip">不能上传dll/exe文件，且不能超过20MB</div>
           </el-upload>
-        </el-col>
-        <el-col :span="12" style="text-align: right">
-          <el-button type="primary" @click="download">下载文件</el-button>
         </el-col>
       </el-row>
     </div>
 
     <div style="margin-top: 50px">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item label="目的">
-          <el-select v-model="formInline.purpose" placeholder="选择目的">
-            <el-option label="认证服务器" value="sure"></el-option>
-            <el-option label="云盘加密" value="secret"></el-option>
-            <el-option label="关联成像" value="relation"></el-option>
-            <el-option label="分发重构" value="refresh"></el-option>
-            <el-option label="其他目的" value="other"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="密钥种类">
-          <el-select v-model="formInline.category" placeholder="选择密钥种类">
-            <el-option label="对称密钥" value="AES"></el-option>
-            <el-option label="非对称密钥" value="RSA"></el-option>
-            <el-option label="量子密钥" value="quantum"></el-option>
-            <el-option label="扩展密钥" value="extendSecretKey"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">下载</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <!--京东播放视频组件(取消了)
-    <div>
-       <nut-video :sources="sources" :options="options" @play="play" @pause="pause" @playend="playend"> </nut-video>
-     </div>
-    -->
-    <div><!--京东抽奖组件-->
-      <nut-luckdraw
-          class="drawTable"
-          ref="luckDrawPrize"
-          :luck-width="luckWidth"
-          :luck-height="luckheight"
-          :prize-list="prizeList"
-          :turns-number="turnsNumber"
-          :turns-time="turnsTime"
-          :prize-index="prizeIndex"
-          :style-opt="styleOpt"
-          @end-turns="endTurns"
-      >
-        <template slot="item" slot-scope="scope">
-          <div class="drawTable-name">{{ scope.item.prizeName }}</div>
-          <div class="drawTable-img">
-            <img :src="scope.item.prizeImg">
+      <el-row type="flex">
+        <el-col :span="2">
+          <div class="grid-content bg-purple">
+            <nut-button size="large" type="primary" @click="lottory">抽奖</nut-button>
           </div>
-        </template>
-      </nut-luckdraw>
-      <div @click="startTurns" class="pointer" :style="pointerStyle"></div>
+        </el-col>
+        <el-col :span="22">
+        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+          <el-form-item label="目的">
+            <el-select v-model="formInline.purpose" placeholder="选择目的">
+              <el-option label="认证服务器" value="sure"></el-option>
+              <el-option label="云盘加密" value="secret"></el-option>
+              <el-option label="关联成像" value="relation"></el-option>
+              <el-option label="分发重构" value="refresh"></el-option>
+              <el-option label="其他目的" value="other"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="密钥种类">
+            <el-select v-model="formInline.category" placeholder="选择密钥种类">
+              <el-option label="对称密钥" value="AES"></el-option>
+              <el-option label="非对称密钥" value="RSA"></el-option>
+              <el-option label="量子密钥" value="quantum"></el-option>
+              <el-option label="扩展密钥" value="extendSecretKey"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="密钥大小">
+            <el-select v-model="formInline.count" placeholder="选择密钥大小">
+              <el-option label="1kb" value="quantum1"></el-option>
+              <el-option label="100kb" value="quantum2"></el-option>
+              <el-option label="1M" value="quantum3"></el-option>
+              <el-option label="10M" value="quantum4"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="onSubmit">下载</el-button>
+          </el-form-item>
+        </el-form>
+        </el-col>
+      </el-row>
     </div>
 
+    <div v-if="showLottory">
+      <div><!--京东抽奖组件-->
+        <nut-luckdraw
+            class="drawTable"
+            ref="luckDrawPrize"
+            :luck-width="luckWidth"
+            :luck-height="luckheight"
+            :prize-list="prizeList"
+            :turns-number="turnsNumber"
+            :turns-time="turnsTime"
+            :prize-index="prizeIndex"
+            :style-opt="styleOpt"
+            @end-turns="endTurns"
+        >
+          <template slot="item" slot-scope="scope">
+            <div class="drawTable-name">{{ scope.item.prizeName }}</div>
+            <div class="drawTable-img">
+              <img :src="scope.item.prizeImg">
+            </div>
+          </template>
+        </nut-luckdraw>
+        <div @click="startTurns" class="pointer" :style="pointerStyle"></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import {DH} from "@/utils/DH";
-import {Buffer} from "buffer";
-import eccrypto from "eccrypto";
-
-window.Buffer = Buffer;
-//import eccrypto from "eccrypto";用这种方式导入，会显示异步组件，无法用router
-import * as eccryptoJS from 'eccrypto-js';
+import {serverIp} from "../../public/config";
 
 export default {
   name: "secretKeyDownload",
   data() {
     return {
+      serverIp: serverIp,
+      showLottory: false,
+      isUpload: false,
       formInline: {
         purpose: '',
-        category: ''
+        category: '',
+        count: ''
       },
       //以下为京东抽奖数据
       // 转盘大小
-      luckWidth: '250px',
-      luckheight: '250px',
+      luckWidth: '350px',
+      luckheight: '350px',
       // 转盘指针图片样式
       pointerStyle: {
-        width: '80px',
-        height: '80px',
+        width: '100px',
+        height: '100px',
         backgroundImage: 'url("https://img11.360buyimg.com/imagetools/jfs/t1/89512/11/15244/137408/5e6f15edEf57fa3ff/cb57747119b3bf89.png")',
         backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat',
@@ -197,46 +183,22 @@ export default {
       num: 5,// 抽奖次数,根据需求定义
     }
   },
+
   mounted() {
     console.log("我服啦")
-    // DH();
+    this.displayUpload()
   },
   methods: {
-
-    async eccryptoJS() {
-      const keyPairA = eccryptoJS.generateKeyPair();
-      const keyPairB = eccryptoJS.generateKeyPair();
-
-      const sharedKey1 = await eccryptoJS.derive(
-          keyPairA.privateKey,
-          keyPairB.publicKey
-      );
-
-      const sharedKey2 = await eccryptoJS.derive(
-          keyPairB.privateKey,
-          keyPairA.publicKey
-      );
-      console.log(sharedKey1.toString('hex') === sharedKey2.toString('hex'))
-    },
-
-    clickDH() {
-      let eccrypto = require("eccrypto")
-      let privateKeyA = eccrypto.generatePrivate();
-      console.log(privateKeyA)
-      let publicKeyA = eccrypto.getPublic(privateKeyA);
-      let privateKeyB = eccrypto.generatePrivate();
-      let publicKeyB = eccrypto.getPublic(privateKeyB);
-      console.log(publicKeyB)
-      eccrypto.derive(privateKeyA, publicKeyB).then(x => console.log(x))
-      eccrypto.derive(privateKeyB, publicKeyA).then(y => console.log(y))
-      //console.log(JSON.stringify(privateKeyA))
-      let int8Array1 = new Int8Array([236, 59, 69, 66, 22, 245, 81, 15, 220, 94, 68, 247, 103, 158, 189, 103, 206, 104, 180, 113, 116, 134, 254, 249, 186, 134, 71, 227, 44, 109, 186, 116])
-      let buffer1 = new Buffer(int8Array1)
-      let int8Array2 = new Int8Array([4, 209, 233, 88, 88, 177, 198, 173, 104, 218, 6, 193, 0, 38, 8, 21, 228, 86, 162, 20, 105, 55, 168, 123, 5, 130, 173, 177, 55, 228, 164, 241, 199, 129, 95, 47, 9, 60, 51, 70, 32, 36, 193, 203, 82, 106, 107, 80, 57, 37, 154, 143, 52, 188, 129, 210, 68, 239, 137, 9, 245, 219, 187, 236, 19])
-      let buffer2 = new Buffer(int8Array2)
-      eccrypto.derive(buffer1, buffer2).then(buffer3 => console.log(buffer3))
-      //let DHString=JSON.stringify(eccrypto.derive(privateKeyA, publicKeyB))
-      // console.log( DHString)
+    displayUpload() {
+      let item = localStorage.getItem("user");
+      if(item){//如果有值
+        let user = JSON.parse(item);
+        if (user.username == 'dangrenren') {
+          this.isUpload = true
+        } else {
+          this.isUpload = false
+        }
+      }
     },
     download0() {
       this.$message.error("后台接口未开发")
@@ -251,17 +213,16 @@ export default {
       this.$message.error("后台接口未开发")
     },
     onSubmit() {
-      this.$message.error("后台接口未开发")
-      console.log('submit!' + this.formInline.purpose + '  ' + this.formInline.category);
+      if (this.formInline.purpose == '' || this.formInline.category == ''||this.formInline.count == '') {
+        this.$message.error("请确认全部选项")
+      } else {//不为空,开始下载
+        let fileName=this.formInline.count
+        window.location.href = "http://"+serverIp+":8094/file/"+fileName+".txt"
+      }
+      //console.log('submit!' + this.formInline.purpose + '  ' + this.formInline.category+'  '+this.formInline.count);
     },
-    play(elm) {
-      console.log('play', elm)
-    },
-    pause(e) {
-      console.log('pause')
-    },
-    playend(e) {
-      alert('播放结束')
+    lottory() {
+      this.showLottory = !this.showLottory;//点击抽奖按钮，显示抽奖转盘。再次点击，隐藏转盘。
     },
     startTurns() {
       if (!this.canBeRotated()) {
@@ -279,12 +240,14 @@ export default {
     },
     endTurns() {
       this.$dialog({
-        content: `恭喜中奖！！！${this.prizeList[this.prizeIndex].prizeName}`,
+        content: `恭喜中奖！！！${this.prizeList[this.prizeIndex].prizeName}。  您的运气太棒了！详情联系负责人 13353273960`,
         noCloseBtn: false,
         noOkBtn: true,
         cancelBtnTxt: "我知道了"
       });
       this.lock = false;
+      //抽一次奖后关掉抽奖界面
+      this.showLottory = false;
     },
     canBeRotated() {
       if (this.num <= 0) {
@@ -320,7 +283,7 @@ export default {
     download() {
       //window.open("http://localhost:9090/file/a07e70f7814147ee992fbb3b95e3728f.jpeg")
       //用open会打开新的浏览器窗口，而使用href不会，比较好一点。
-      window.location.href = "http://localhost:9090/file/a07e70f7814147ee992fbb3b95e3728f.jpeg"
+      window.location.href = "http://"+serverIp+":8094/file/testDownload.txt"
     }
 
   }
@@ -328,25 +291,21 @@ export default {
 </script>
 
 <style scoped>
-el-row {
-  margin-bottom: 50px;
-}
-
-el-col {
-  border-radius: 4px;
-}
-
-.bg-purple-dark {
-  background: #99a9bf;
-  margin-bottom: 50px;
-  margin-top: 100px;
-  margin-left: 50px;
-
-  margin-right: 50px;
-  text-align: center;
-}
 
 .demo-form-inline {
   margin-left: 250px;
+}
+
+.app-container {
+  /* background-color: #f5f5f5;  设置背景颜色 */
+  background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+  padding: 20px; /* 设置内边距，调整布局 */
+  display: flex; /* 使用弹性布局 */
+  flex-direction: column; /* 垂直排列子元素 */
+  align-items: center; /* 在主轴上居中对齐 */
+  justify-content: center; /* 在交叉轴上居中对齐 */
+
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
 }
 </style>

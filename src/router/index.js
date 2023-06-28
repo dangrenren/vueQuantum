@@ -1,4 +1,3 @@
-
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from "@/store";
@@ -25,6 +24,43 @@ const routes = [
         path: '/404',
         name: '404',
         component: () => import('../views/404.vue')
+    },
+    {
+        path: '/front',
+        name: 'Front',
+        component: () => import('../views/front/Front'),
+        children: [
+            {
+                path: 'home',
+                name: 'FrontHome',
+                component: () => import('../views/front/Home.vue')
+            },
+            {
+                path: 'item1',
+                name: 'Item1',
+                component: () => import('../views/front/Item1.vue')
+            },
+            {
+                path: 'person',
+                name: 'FrontPerson',
+                component: () => import('../views/front/Person')
+            },
+            {
+                path: 'password',
+                name: 'FrontPassword',
+                component: () => import('../views/front/Password')
+            },
+            {
+                path: 'article',
+                name: 'FrontArticle',
+                component: () => import('../views/front/Article')
+            },
+            {
+                path: 'articleDetail',
+                name: 'ArticleDetail',
+                component: () => import('../views/front/ArticleDetail')
+            },
+        ]
     }
 ]
 
@@ -84,6 +120,7 @@ setRoutes()
 router.beforeEach((to, from, next) => {
     localStorage.setItem("currentPathName", to.name)  // 设置当前的路由名称，为了在Header组件中去使用
     store.commit("setPath")  // 触发store的数据更新
+    /*
     //这种写法不行，因为用户未登录用户的路由是空的，会导致不会放行
     if(localStorage.getItem("menus")) {//如果有menus，代表用户已经登录
         if(!to.matched.length) {//未找到路由的情况，就跳转到'404'页面
@@ -94,8 +131,9 @@ router.beforeEach((to, from, next) => {
     }else {//如果没有menus，代表用户未登录，就跳转到登录页面
         next("/login")//放行
     }
+    */
 
-    /*
+
     // 未找到路由的情况
     if (!to.matched.length) {
         const storeMenus = localStorage.getItem("menus")
@@ -108,8 +146,6 @@ router.beforeEach((to, from, next) => {
     }
     // 其他的情况都放行
     next()
-    */
-
 })
 
 export default router

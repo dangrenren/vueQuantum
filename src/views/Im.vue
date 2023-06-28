@@ -37,6 +37,7 @@
 <script>
 
 import request from "@/utils/request";
+import {serverIp} from "../../public/config";
 
 let socket;
 
@@ -118,7 +119,7 @@ export default {
         console.log("您的浏览器不支持WebSocket");
       } else {
         console.log("您的浏览器支持WebSocket");
-        let socketUrl = "ws://localhost:9091/imserver/" + username;
+        let socketUrl = "ws://"+serverIp+":8091/imserver/" + username;
         if (socket != null) {
           socket.close();
           socket = null;

@@ -10,7 +10,7 @@
     <div style="height: 60px; line-height: 60px; text-align: center">
       <img src="../assets/jumping.gif" alt=""
            style="width: 30px; position: relative; top: 10px; right: 10px;float: inside">
-      <b style="color: white" v-show="logoTextShow">后台管理系统</b>
+      <b style="color: white" v-show="logoTextShow">密钥下载服务</b>
     </div>
     <!--
     <el-menu-item index="/home">
